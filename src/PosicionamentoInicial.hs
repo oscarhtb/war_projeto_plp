@@ -10,6 +10,21 @@ shuffleList xs = do
     return $ shuffle' xs (length xs) gen  -- Embaralha a lista
 -- ordenar aleatoriamente uma lista de 1 a 24
 
+--TA FUNCIONANDO
+--função para determinar a qual jogador pertence aquele território
+determinePlayer::Int->Int->Int
+determinePlayer qtd ind =
+    determinePlayerRec qtd ind 1
+
+-- 24 / qtd é o n de terr de cada jogador
+determinePlayerRec::Int->Int->Int->Int
+determinePlayerRec qtd ind nJogador =
+    if (div 24 qtd) * nJogador >= ind then nJogador
+    else determinePlayerRec qtd ind (nJogador+1)
+
+
+
+
 -- recebendo o mapa, e a posição dele que eu quero mudar,
 -- devo inserir o valor que eu tenho na posição,
 -- e retornar 
@@ -26,14 +41,17 @@ substituirSublista listaDeListas pos novaSublista
     | otherwise = let (antes, depois) = splitAt (pos - 1) listaDeListas in antes ++ [novaSublista] ++ tail depois
 
 
-
+-- TA FUNCIONANDO
 --passar por todos os elementos da shuffledList
--- iterateOverShuffle::[Int]->[[Int]]->Int->[[Int]]
--- iterateOverShuffle slist mapa qtd =
---     iterateOverShuffleRec slist mapa qtd 1
+iterateOverShuffle::[Int]->[[Int]]->Int->[[Int]]
+iterateOverShuffle slist mapa qtd =
+    iterateOverShuffleRec slist mapa qtd 1
 
--- iterateOverShuffleRec::[Int]->[[Int]]->Int->Int->[[Int]]
--- iterateOverShuffleRec slist mapa qtd i =
+iterateOverShuffleRec::[Int]->[[Int]]->Int->Int->[[Int]]
+iterateOverShuffleRec [] mapa qtd i = mapa
+iterateOverShuffleRec (h:t) mapa qtd i =
+    iterateOverShuffleRec t (substituirSublista mapa h [determinePlayer qtd i, 1]) qtd (i+1)
+
 
 
 
