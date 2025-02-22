@@ -1,8 +1,6 @@
 module ShuffleListPura where
 import System.Random (mkStdGen, randomR, StdGen)
 import Data.Time.Clock.POSIX (getPOSIXTime)
-import System.Time (getClockTime)
-import System.Posix (epochTime)
 
 -- Embaralha uma lista usando Fisher-Yates e um gerador puro
 shuffleListPura :: Int -> [a] -> [a]
@@ -16,5 +14,7 @@ shuffle xs gen =
         rest = take n xs ++ drop (n + 1) xs  -- Remove o elemento da lista
     in picked : shuffle rest newGen  -- Continua embaralhando os elementos restantes
 
-gerarSeed :: Int
-gerarSeed = floor . toRational =<< getClockTime
+gerarSeed::IO Int
+gerarSeed = do
+    posix <- getPOSIXTime
+    return (floor (posix * 1000000))

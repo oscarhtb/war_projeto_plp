@@ -73,8 +73,7 @@ executable war-projeto-plp
       random >= 1.2 && < 2,
       random-shuffle,
       random,
-      time,
-      unix
+      time
 
     -- Directories containing source files.
     hs-source-dirs:   app, src

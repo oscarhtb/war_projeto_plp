@@ -20,8 +20,11 @@ import ShuffleListPura (shuffleListPura, gerarSeed)
 
 war :: IO ()
 war = do
-    let slist = shuffleListPura gerarSeed [1..6]
-    let slistmapa shuffleListPura gerarSeed [1..24]
+    seed1 <- gerarSeed
+    seed2 <- gerarSeed
+    let slist = shuffleListPura seed1 [1..6]
+    let slistmapa = shuffleListPura seed2 [1..24]
+
     jogadoresInfo <- menuInicial  -- Extraímos a lista de IO [Int]
     
     let numJogadores = sum jogadoresInfo  -- Agora podemos calcular sum
