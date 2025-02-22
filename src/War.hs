@@ -3,6 +3,7 @@ import Rodada (rodada)
 import MenuInicial (menuInicial)
 import PosicionamentoInicial (iterateOverShuffle, shuffleList)
 import ListaDeObjetivos (listaDeObjetivos)
+import ShuffleListPura (shuffleListPura, gerarSeed)
 
 
 -- ordem cronológica:
@@ -19,8 +20,8 @@ import ListaDeObjetivos (listaDeObjetivos)
 
 war :: IO ()
 war = do
-    slist <- shuffleList [1..6]
-    slistmapa <- shuffleList [1..24]
+    let slist = shuffleListPura gerarSeed [1..6]
+    let slistmapa shuffleListPura gerarSeed [1..24]
     jogadoresInfo <- menuInicial  -- Extraímos a lista de IO [Int]
     
     let numJogadores = sum jogadoresInfo  -- Agora podemos calcular sum

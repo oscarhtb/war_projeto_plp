@@ -4,7 +4,7 @@ import System.Random.Shuffle (shuffle')
 
 
 -- TA FUNCIONANDO, vamos usar isso para fazer a divisão.
-shuffleList :: [a] -> IO [a]
+shuffleList :: [Int] -> IO [Int]
 shuffleList xs = do
     gen <- newStdGen  -- Gera um número aleatório como semente
     return $ shuffle' xs (length xs) gen  -- Embaralha a lista
