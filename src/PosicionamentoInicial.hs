@@ -1,5 +1,5 @@
 module PosicionamentoInicial where
-import System.Random (newStdGen, randomRIO)
+import System.Random (newStdGen)
 import System.Random.Shuffle (shuffle')
 
 
