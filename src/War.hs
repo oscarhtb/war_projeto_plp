@@ -1,9 +1,10 @@
 module War where
 import Rodada (rodada)
 import MenuInicial (menuInicial)
-import PosicionamentoInicial (iterateOverShuffle, shuffleList)
+import PosicionamentoInicial (iterateOverShuffle)
 import ListaDeObjetivos (listaDeObjetivos)
 import ShuffleListPura (shuffleListPura, gerarSeed)
+import MostrarObjetivos (exporObjetivo)
 
 
 -- ordem cronológica:
@@ -35,5 +36,7 @@ war = do
     let mapa = iterateOverShuffle slistmapa (replicate 24 [0,1]) numJogadores
     print "Os territorios foram sorteados!"
     print mapa
+
+    exporObjetivo (jogadoresInfo !! 0) objetivos
     
     rodada jogadoresInfo objetivos mapa  -- Chamada correta da função
