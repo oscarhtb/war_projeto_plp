@@ -41,4 +41,4 @@ war = do
 
     exporObjetivo (jogadoresInfo !! 0) objetivos
     
-    rodada jogadoresInfo objetivos 1 mapa  -- Chamada correta da função
+    rodada 1 jogadoresInfo objetivos 1 mapa  -- Chamada correta da função
