@@ -1,6 +1,7 @@
 module Rodada where
 import System.Console.ANSI
 import System.Random (mkStdGen, randomRs, StdGen)
+import Data.List (sort)
 import MapeamentoTerritorios (mapeiaTerritorio)
 import RepresentacaoTerritorios (imprimeMapa, defineCor)
 import ShuffleListPura (gerarSeed, shuffleListPura)
@@ -59,7 +60,8 @@ batalhaMapa mapa perdasAtaque perdasDefesa =
 
 calculaPerdasAtaque::[Int]->Int->Int --faz um take pra pegar os atacantes, ordena-os, pega os defensores, ordena-os
 calculaPerdasAtaque dados qtdAtaque = 
-    vantagem () --l1 são os atacantes
+    vantagem2 (take qtdAtaque (preencheDados (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados)))) (drop qtdAtaque (preencheDados (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados))))
+
 
 
 gerarJogadasDosDados :: Int -> Int -> [Int]
@@ -94,7 +96,7 @@ preencheDados::[Int]->[Int]->[Int] --vai receber as listas ordenadas e preenchê
 -- lista 1 são os atacantes, lista 2 os defensores
 preencheDados lista1 lista2 =
     if ((length lista1) == (length lista2)) then (lista1 ++ lista2)
-    else if ((length lista1) < (length lista2)) then preencheDados (lista1 ++ [0]) lista2
+    else if ((length lista1) < (length lista2)) then preencheDados lista1 (init lista2)
     else preencheDados lista1 (lista2 ++ [0])
 
 -- mapa, indicePaisAtacante, indiceAlvo, qtdExercitos
