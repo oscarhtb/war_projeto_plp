@@ -12,21 +12,30 @@ import System.Process (callCommand)
 exporObjetivo :: Int -> [Int] -> IO ()
 exporObjetivo qtd objs = do
     print "Agora vamos mostrar os objetivos. Se prepare!"
+    print "Pressione ENTER para ver os objetivos"
+    _ <- getLine
     clearScreen
     exporObjetivoRec qtd 1 objs
 
 exporObjetivoRec :: Int -> Int -> [Int] -> IO ()
-exporObjetivoRec qtd _ [] = putStrLn "Todos os objetivos foram exibidos."
+exporObjetivoRec qtd a [] = do
+    putStrLn "Todos os objetivos foram exibidos."
+    putStrLn "Pressione ENTER para continuar"
+    _ <- getLine
+    clearScreen
 exporObjetivoRec qtd indice (h:t)
     | indice > qtd = putStrLn "Todos os objetivos foram exibidos."
     | otherwise = do
+        putStrLn $ "Pressione ENTER"
+        _ <- getLine
+        clearScreen
         putStrLn $ "Pressione ENTER para ver o objetivo do jogador " ++ show indice
         _ <- getLine
         clearScreen
         putStrLn $ "Objetivo do jogador " ++ show indice
         putStrLn $ "Objetivo: " ++ imprimeObjetivo h
-        _ <- getLine
-        clearScreen
+        --_ <- getLine
+        --clearScreen
         exporObjetivoRec qtd (indice + 1) t
 
 clearScreen :: IO ()
