@@ -5,6 +5,7 @@ import PosicionamentoInicial (iterateOverShuffle)
 import ListaDeObjetivos (listaDeObjetivos)
 import ShuffleListPura (shuffleListPura, gerarSeed)
 import MostrarObjetivos (exporObjetivo)
+import RepresentacaoTerritorios (imprimeMapa)
 
 
 -- ordem cronológica:
@@ -35,7 +36,8 @@ war = do
     
     let mapa = iterateOverShuffle slistmapa (replicate 24 [0,1]) numJogadores
     print "Os territorios foram sorteados!"
-    print mapa
+    -- print mapa
+    imprimeMapa mapa
 
     exporObjetivo (jogadoresInfo !! 0) objetivos
     
