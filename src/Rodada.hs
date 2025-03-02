@@ -38,17 +38,25 @@ inputAtaque mapa = do
         qtd <- readLn :: IO Int
         randomSeed <- gerarSeed
         -- calcular ação de ataque
-        
-        inputAtaque (acaoDeAtaque mapa terr alvo qtd (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! (alvo - 1)) !! 1)))))
+        -- posso checar se o retorno de acao de ataque deixou algum territorio com 0 exercitos e, caso sim, chamar a conquista
+        -- ATUALMENTE, após um território ser conquistado e tiver 0 exércitos, ele permanece com 0 exércitos
+        let mapaPosAtaque = acaoDeAtaque mapa terr alvo qtd (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! (alvo - 1)) !! 1))))
+        -- func para checar se o mapa possui alguma posição com zero exércitos, o que indicaria território conquistado
+
+        inputAtaque mapaPosAtaque
     else
         return (mapa)
 
 acaoDeAtaque::[[Int]]->Int->Int->Int->[Int]->[[Int]]
 acaoDeAtaque mapa terr alvo qtd dados =
-    batalhaMapa
+    batalhaMapa mapa calculaPerdasAtaque calculaPerdasDefesa terr alvo
 
 batalhaMapa::[[Int]]->Int->Int->[[Int]]
-batalhaMapa mapa perdasAtaque perdasDefesa =
+batalhaMapa mapa perdasAtaque perdasDefesa terr alvo =
+    substituirSublista (substituirSublista (mapa terr [((mapa !! (terr - 1)) !! 0), ((mapa !! (terr - 1)) !! 1) - perdasAtaque])) alvo [((mapa !! (alvo - 1)) !! 0), ((mapa !! (alvo - 1)) !! 1) - perdasDefesa]
+
+conquistaDeTerritorio
+conquistaDeTerritorio mapa terr conquistador
 
 -- [5, 2, 4, 4, 4] [3, 3, 3, 3, 3]
 -- [4, 2, 2] [3, 0, 0]
@@ -58,10 +66,15 @@ batalhaMapa mapa perdasAtaque perdasDefesa =
 
 -- dividir a lista de dados baseado no qtd, ordenar elas, passar as duas para o preencheDados e dividir o retorno
 
+-- testado, aparentemente funcionando
 calculaPerdasAtaque::[Int]->Int->Int --faz um take pra pegar os atacantes, ordena-os, pega os defensores, ordena-os
 calculaPerdasAtaque dados qtdAtaque = 
     vantagem2 (take qtdAtaque (preencheDados (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados)))) (drop qtdAtaque (preencheDados (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados))))
 
+-- preciso testar ainda
+calculaPerdasDefesa::[Int]->Int->Int
+calculaPerdasDefesa dados qtdAtaque =
+    vantagem (take qtdAtaque (preencheDados2 (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados)))) (drop qtdAtaque (preencheDados2 (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados))))
 
 
 gerarJogadasDosDados :: Int -> Int -> [Int]
@@ -99,6 +112,15 @@ preencheDados lista1 lista2 =
     else if ((length lista1) < (length lista2)) then preencheDados lista1 (init lista2)
     else preencheDados lista1 (lista2 ++ [0])
 
+preencheDados2::[Int]->[Int]->[Int] --vai receber as listas ordenadas e preenchê-las de acordo com a quantidade
+-- lista 1 são os atacantes, lista 2 os defensores
+preencheDados2 lista1 lista2 =
+    if ((length lista1) == (length lista2)) then (lista1 ++ lista2)
+    else if ((length lista1) < (length lista2)) then preencheDados (lista1 ++ [0])
+    else preencheDados lista1 (init lista2)
+
+temTerritorioConquistado::[[Int]]->Int
+temTerritorioConquistado 
 -- mapa, indicePaisAtacante, indiceAlvo, qtdExercitos
 -- atacar::[[Int]]->Int->Int->Int->[[Int]]
 
