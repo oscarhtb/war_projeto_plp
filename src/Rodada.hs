@@ -2,32 +2,45 @@ module Rodada where
 import System.Console.ANSI
 import System.Random (mkStdGen, randomRs, StdGen)
 import Data.List (sort)
+import System.Exit (exitSuccess)
 import MapeamentoTerritorios (mapeiaTerritorio)
 import RepresentacaoTerritorios (imprimeMapa, defineCor)
 import ShuffleListPura (gerarSeed, shuffleListPura)
 import Movimento (inputMovimento)
+import ChecagemDeObjetivos (checagemVitoria)
+import MostrarObjetivos (imprimeObjetivo)
 
 rodada::Int->[Int]->[Int]->Int->[[Int]]->IO()
 rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
-    imprimeMapa mapa
-
+    
     defineCor indiceJogador
     putStrLn $ "Vez do jogador " ++ (show indiceJogador)
     setSGR [Reset]
 
-    -- alocacao
-    novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5
+    novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
+    verificaObjetivos jogadoresInfo objetivos mapa
 
     if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
     else do
-        mapaPosAtaque <- inputAtaque novoMapa indiceJogador
+        mapaPosAtaque <- inputAtaque novoMapa indiceJogador jogadoresInfo objetivos
         mapaPosMover <- inputMovimento mapaPosAtaque indiceJogador []
         rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosMover
     
+verificaObjetivos::[Int]->[Int]->[[Int]]->IO()
+verificaObjetivos jogInfo objetivos mapa = do
+    let vitorioso = checagemVitoria jogInfo objetivos mapa
+    if vitorioso /= -1 then do
+        defineCor vitorioso
+        putStrLn ("O jogador " ++ (show vitorioso) ++ " venceu!")
+        putStrLn ("Seu objetivo de " ++ (imprimeObjetivo (objetivos !! (vitorioso - 1))) ++ " foi atingido com sucesso!")
+        imprimeMapa mapa
+        exitSuccess
+    else return ()
 
-
-inputAtaque::[[Int]]->Int->IO [[Int]]
-inputAtaque mapa indiceJogador = do
+inputAtaque::[[Int]]->Int->[Int]->[Int]->IO [[Int]]
+inputAtaque mapa indiceJogador jogadoresInfo objetivos = do
+    verificaObjetivos jogadoresInfo objetivos mapa
+    imprimeMapa mapa
     print "Voce deseja atacar? (1)Sim (0)Nao"
     resposta <- readLn::IO Int
     if resposta == 1 then do
@@ -46,8 +59,8 @@ inputAtaque mapa indiceJogador = do
             putStrLn "Você conquistou o território! Quantos exércitos você deseja transferir? (min: 1, max: 3)" -- na verdade o máximo depende da sua qtd de exercitos
             transfere <- readLn :: IO Int
             let aux = substituirSublista mapaPosAtaque (temTerritorioConquistado mapaPosAtaque) [indiceJogador, transfere]
-            inputAtaque (substituirSublista aux (mapeiaTerritorio terr) [indiceJogador, ((aux !! ((mapeiaTerritorio terr) - 1)) !! 1) - transfere]) indiceJogador
-        else inputAtaque (mapaPosAtaque) indiceJogador
+            inputAtaque (substituirSublista aux (mapeiaTerritorio terr) [indiceJogador, ((aux !! ((mapeiaTerritorio terr) - 1)) !! 1) - transfere]) indiceJogador jogadoresInfo objetivos
+        else inputAtaque (mapaPosAtaque) indiceJogador jogadoresInfo objetivos
     else
         return (mapa)
 
@@ -91,15 +104,17 @@ vantagem2 :: [Int] -> [Int] -> Int
 vantagem2 l1 l2 = length $ filter id $ zipWith (<=) l1 l2
 
 
-menuAlocacaoTerritorios::[[Int]]->Int->Int->IO [[Int]]
-menuAlocacaoTerritorios mapa indiceJogador qtdAdicoes = do
+menuAlocacaoTerritorios::[[Int]]->Int->Int->[Int]->[Int]->IO [[Int]]
+menuAlocacaoTerritorios mapa indiceJogador qtdAdicoes jogInfo objetivos = do
+    verificaObjetivos jogInfo objetivos mapa
+    imprimeMapa mapa
     putStrLn $ "Voce pode alocar " ++ (show qtdAdicoes) ++ " exercitos"
     putStrLn "Digite o território no qual voce deseja adicionar (em forma de sigla): "
     terr <- getLine
     putStrLn "Quantos exercitos você deseja adicionar? "
     qtd <- readLn :: IO Int
     if (qtdAdicoes - qtd) == 0 then return (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! ((mapeiaTerritorio terr) - 1)) !! 1) + qtd])
-    else menuAlocacaoTerritorios (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! ((mapeiaTerritorio terr) - 1)) !! 1) + qtd]) indiceJogador (qtdAdicoes - qtd)
+    else menuAlocacaoTerritorios (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! ((mapeiaTerritorio terr) - 1)) !! 1) + qtd]) indiceJogador (qtdAdicoes - qtd) jogInfo objetivos
 
 
 substituirSublista :: [[a]] -> Int -> [a] -> [[a]]

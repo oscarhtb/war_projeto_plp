@@ -26,7 +26,7 @@ checa14territorios indiceJogador mapa =
 
 checa12territoriosComDois::Int->[[Int]]->Bool
 checa12territoriosComDois indiceJogador mapa =
-    contagemDeTerritoriosComMaisDeUmExercito >= 12
+    contagemDeTerritoriosComMaisDeUmExercito indiceJogador mapa >= 12
 
 checaAmericaOceania::Int->[[Int]]->Bool
 checaAmericaOceania indiceJogador mapa =
@@ -47,14 +47,14 @@ checaAmericaEuropa indiceJogador mapa =
 
 funcoesDeObjetivo::[Int->[[Int]]->Bool]
 funcoesDeObjetivo = 
-[
-    checa14territorios,
-    checa12territoriosComDois,
-    checaAmericaOceania,
-    checaAsiaEuropa,
-    checaEuropaOceaniaAfrica,
-    checaAmericaEuropa
-]
+    [
+        checa14territorios,
+        checa12territoriosComDois,
+        checaAmericaOceania,
+        checaAsiaEuropa,
+        checaEuropaOceaniaAfrica,
+        checaAmericaEuropa
+    ]
 
 
 contagemDeTerritorios::Int->[[Int]]->Int
@@ -66,7 +66,7 @@ contagemDeTerritorios indiceJogador (h:t) =
 contagemDeTerritoriosComMaisDeUmExercito::Int->[[Int]]->Int
 contagemDeTerritoriosComMaisDeUmExercito indiceJogador [] = 0
 contagemDeTerritoriosComMaisDeUmExercito indiceJogador (h:t) =
-    if (h !! 0) && ((h !! 1) > 1) == indiceJogador then (1 + (contagemDeTerritoriosComMaisDeUmExercito indiceJogador t))
+    if (h !! 0) == indiceJogador && ((h !! 1) > 1) then (1 + (contagemDeTerritoriosComMaisDeUmExercito indiceJogador t))
     else contagemDeTerritoriosComMaisDeUmExercito indiceJogador t
 
 
@@ -88,4 +88,4 @@ checaEuropa indiceJogador mapa =
 
 checaAfrica::Int->[[Int]]->Bool
 checaAfrica indiceJogador mapa =
-    ((mapa !! 11) !! 0) == indiceJogador && ((mapa !! 12) !! 0) == indiceJogador && ((mapa !! 13) !! 0) == indiceJogador && ((mapa !! 14) !! 0) == indiceJogador && ((mapa !! 15) !! 0)
+    (((mapa !! 11) !! 0) == indiceJogador) && (((mapa !! 12) !! 0) == indiceJogador )&& (((mapa !! 13) !! 0) == indiceJogador) && (((mapa !! 14) !! 0) == indiceJogador) && ((mapa !! 15) !! 0) == indiceJogador

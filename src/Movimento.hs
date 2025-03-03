@@ -3,10 +3,12 @@ import Text.Read (readMaybe)
 import MapeamentoTerritorios (mapeiaTerritorio)
 import Adjacencia (checarAdjacencia, matrizAdjacencia)
 import PosicionamentoInicial (substituirSublista)
+import RepresentacaoTerritorios (imprimeMapa)
 
 
 inputMovimento::[[Int]]->Int->[Int]->IO [[Int]]
 inputMovimento mapa indiceJogador movimentosFeitos = do
+    imprimeMapa mapa
     putStrLn "Você deseja mover algum exercito? Sim(1) Nao(0)"
     inputUsuario <- getLine
     if not (ehInteiro inputUsuario) then do
@@ -33,7 +35,7 @@ inputMovimento mapa indiceJogador movimentosFeitos = do
                 else do
                     putStrLn "E quantos exercitos serão transferidos? (min: 1, max: 3)"
                     qtd <- readLn :: IO Int
-                    if (qtd < 1) || (qtd > 3) || not (possuiExercitosSuficientes mapa (mapeiaTerritorio res) indiceJogador) then do
+                    if (qtd < 1) || (qtd > 3) || not (possuiExercitosSuficientes mapa (mapeiaTerritorio res) qtd) then do
                         putStrLn "Entrada inválida :("
                         inputMovimento mapa indiceJogador movimentosFeitos
                     else
