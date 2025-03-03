@@ -6,7 +6,6 @@ import MapeamentoTerritorios (mapeiaTerritorio)
 import RepresentacaoTerritorios (imprimeMapa, defineCor)
 import ShuffleListPura (gerarSeed, shuffleListPura)
 
--- [numJogadores, numBots], objetivoSorteado, índice do jogador da vez, mapaSorteado, 
 rodada::Int->[Int]->[Int]->Int->[[Int]]->IO()
 rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
     imprimeMapa mapa
@@ -20,13 +19,13 @@ rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
 
     if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
     else do
-        inputAtaque
-        rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
+        mapaPosAtaque <- inputAtaque novoMapa indiceJogador
+        rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosAtaque
     
 
 
-inputAtaque::[[Int]]->[[Int]]->IO [[Int]]
-inputAtaque mapa = do
+inputAtaque::[[Int]]->Int->IO [[Int]]
+inputAtaque mapa indiceJogador = do
     print "Voce deseja atacar? (1)Sim (0)Nao"
     resposta <- readLn::IO Int
     if resposta == 1 then do
@@ -34,29 +33,30 @@ inputAtaque mapa = do
         terr <- getLine
         putStrLn "Qual territorio voce deseja invadir?"
         alvo <- getLine
-        putrStrLn "Com quantos exercitos voce deseja atacar"
+        putStrLn "Com quantos exercitos voce deseja atacar"
         qtd <- readLn :: IO Int
         randomSeed <- gerarSeed
-        -- calcular ação de ataque
-        -- posso checar se o retorno de acao de ataque deixou algum territorio com 0 exercitos e, caso sim, chamar a conquista
-        -- ATUALMENTE, após um território ser conquistado e tiver 0 exércitos, ele permanece com 0 exércitos
-        let mapaPosAtaque = acaoDeAtaque mapa terr alvo qtd (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! (alvo - 1)) !! 1))))
+        let jogadaDados = (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! ((mapeiaTerritorio alvo) - 1)) !! 1))))
+        putStrLn $ "Jogada dos dados: " ++ show jogadaDados
+        let mapaPosAtaque = acaoDeAtaque mapa (mapeiaTerritorio terr) (mapeiaTerritorio alvo) qtd jogadaDados
         -- func para checar se o mapa possui alguma posição com zero exércitos, o que indicaria território conquistado
-
-        inputAtaque mapaPosAtaque
+        if (temTerritorioConquistado mapaPosAtaque /= -1) then do
+            putStrLn "Você conquistou o território! Quantos exércitos você deseja transferir? (min: 1, max: 3)" -- na verdade o máximo depende da sua qtd de exercitos
+            transfere <- readLn :: IO Int
+            let aux = substituirSublista mapaPosAtaque (temTerritorioConquistado mapaPosAtaque) [indiceJogador, transfere]
+            inputAtaque (substituirSublista aux (mapeiaTerritorio terr) [indiceJogador, ((aux !! ((mapeiaTerritorio terr) - 1)) !! 1) - transfere]) indiceJogador
+        else inputAtaque (mapaPosAtaque) indiceJogador
     else
         return (mapa)
 
 acaoDeAtaque::[[Int]]->Int->Int->Int->[Int]->[[Int]]
 acaoDeAtaque mapa terr alvo qtd dados =
-    batalhaMapa mapa calculaPerdasAtaque calculaPerdasDefesa terr alvo
+    batalhaMapa mapa (calculaPerdasAtaque dados qtd) (calculaPerdasDefesa dados qtd) terr alvo
 
-batalhaMapa::[[Int]]->Int->Int->[[Int]]
+batalhaMapa::[[Int]]->Int->Int->Int->Int->[[Int]]
 batalhaMapa mapa perdasAtaque perdasDefesa terr alvo =
-    substituirSublista (substituirSublista (mapa terr [((mapa !! (terr - 1)) !! 0), ((mapa !! (terr - 1)) !! 1) - perdasAtaque])) alvo [((mapa !! (alvo - 1)) !! 0), ((mapa !! (alvo - 1)) !! 1) - perdasDefesa]
+    substituirSublista (substituirSublista mapa terr [((mapa !! (terr - 1)) !! 0), ((mapa !! (terr - 1)) !! 1) - perdasAtaque]) alvo [((mapa !! (alvo - 1)) !! 0), ((mapa !! (alvo - 1)) !! 1) - perdasDefesa]
 
-conquistaDeTerritorio
-conquistaDeTerritorio mapa terr conquistador
 
 -- [5, 2, 4, 4, 4] [3, 3, 3, 3, 3]
 -- [4, 2, 2] [3, 0, 0]
@@ -69,12 +69,14 @@ conquistaDeTerritorio mapa terr conquistador
 -- testado, aparentemente funcionando
 calculaPerdasAtaque::[Int]->Int->Int --faz um take pra pegar os atacantes, ordena-os, pega os defensores, ordena-os
 calculaPerdasAtaque dados qtdAtaque = 
-    vantagem2 (take qtdAtaque (preencheDados (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados)))) (drop qtdAtaque (preencheDados (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados))))
+    let aux = preencheDados (reverse (sort (take qtdAtaque dados))) (reverse (sort (drop qtdAtaque dados)))
+    in vantagem2 (take (div (length aux) 2) aux) (drop (div (length aux) 2) aux)
 
 -- preciso testar ainda
 calculaPerdasDefesa::[Int]->Int->Int
 calculaPerdasDefesa dados qtdAtaque =
-    vantagem (take qtdAtaque (preencheDados2 (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados)))) (drop qtdAtaque (preencheDados2 (sort (take qtdAtaque dados)) (sort (drop qtdAtaque dados))))
+    let aux = preencheDados2 (reverse (sort (take qtdAtaque dados))) (reverse (sort (drop qtdAtaque dados)))
+    in vantagem (take (div (length aux) 2) aux) (drop (div (length aux) 2) aux)
 
 
 gerarJogadasDosDados :: Int -> Int -> [Int]
@@ -94,8 +96,8 @@ menuAlocacaoTerritorios mapa indiceJogador qtdAdicoes = do
     terr <- getLine
     putStrLn "Quantos exercitos você deseja adicionar? "
     qtd <- readLn :: IO Int
-    if (qtdAdicoes - qtd) == 0 then return (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! (mapeiaTerritorio terr)) !! 1) + qtd])
-    else menuAlocacaoTerritorios (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! (mapeiaTerritorio terr)) !! 1) + qtd]) indiceJogador (qtdAdicoes - qtd)
+    if (qtdAdicoes - qtd) == 0 then return (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! ((mapeiaTerritorio terr) - 1)) !! 1) + qtd])
+    else menuAlocacaoTerritorios (substituirSublista mapa (mapeiaTerritorio terr) [indiceJogador, ((mapa !! ((mapeiaTerritorio terr) - 1)) !! 1) + qtd]) indiceJogador (qtdAdicoes - qtd)
 
 
 substituirSublista :: [[a]] -> Int -> [a] -> [[a]]
@@ -116,11 +118,18 @@ preencheDados2::[Int]->[Int]->[Int] --vai receber as listas ordenadas e preench�
 -- lista 1 são os atacantes, lista 2 os defensores
 preencheDados2 lista1 lista2 =
     if ((length lista1) == (length lista2)) then (lista1 ++ lista2)
-    else if ((length lista1) < (length lista2)) then preencheDados (lista1 ++ [0])
-    else preencheDados lista1 (init lista2)
+    else if ((length lista1) < (length lista2)) then preencheDados2 (lista1 ++ [0]) lista2
+    else preencheDados2 (init lista1) lista2
+
+temTerritorioConquistadoRec::[[Int]]->Int->Int
+temTerritorioConquistadoRec [] indice = -1
+temTerritorioConquistadoRec (head:tail) indice =
+    if (head !! 1) == 0 then indice else temTerritorioConquistadoRec tail (indice + 1)
 
 temTerritorioConquistado::[[Int]]->Int
-temTerritorioConquistado 
+temTerritorioConquistado mapa = temTerritorioConquistadoRec mapa 1
+
+
 -- mapa, indicePaisAtacante, indiceAlvo, qtdExercitos
 -- atacar::[[Int]]->Int->Int->Int->[[Int]]
 
