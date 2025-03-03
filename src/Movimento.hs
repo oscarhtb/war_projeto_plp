@@ -47,8 +47,9 @@ possuiExercitosSuficientes mapa territorio qtd =
     ((mapa !! (territorio - 1)) !! 1) > qtd
 
 pertence::[[Int]]->Int->Int->Bool
+
 pertence mapa territorio indiceJogador =
-    ((mapa !! (territorio - 1)) !! 0) == indiceJogador
+    (((mapa !! (territorio - 1)) !! 0) == indiceJogador) && territorio /= -1
 
 movimentoJaRealizado::[Int]->Int->Bool
 movimentoJaRealizado movimentos territorio =

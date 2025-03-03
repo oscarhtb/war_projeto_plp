@@ -17,8 +17,5 @@ menuInicial = do
     numBots <- readLn::IO Int
     return [numJogadores, numBots]
 
--- main :: IO ()
--- main = do
---   resultado <- menuInicial
---   putStrLn $ show resultado
+
 
