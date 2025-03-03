@@ -5,6 +5,7 @@ import Data.List (sort)
 import MapeamentoTerritorios (mapeiaTerritorio)
 import RepresentacaoTerritorios (imprimeMapa, defineCor)
 import ShuffleListPura (gerarSeed, shuffleListPura)
+import Movimento (inputMovimento)
 
 rodada::Int->[Int]->[Int]->Int->[[Int]]->IO()
 rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
@@ -20,7 +21,8 @@ rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
     if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
     else do
         mapaPosAtaque <- inputAtaque novoMapa indiceJogador
-        rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosAtaque
+        mapaPosMover <- inputMovimento mapaPosAtaque indiceJogador []
+        rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosMover
     
 
 
@@ -33,7 +35,7 @@ inputAtaque mapa indiceJogador = do
         terr <- getLine
         putStrLn "Qual territorio voce deseja invadir?"
         alvo <- getLine
-        putStrLn "Com quantos exercitos voce deseja atacar"
+        putStrLn "Com quantos exercitos voce deseja atacar?"
         qtd <- readLn :: IO Int
         randomSeed <- gerarSeed
         let jogadaDados = (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! ((mapeiaTerritorio alvo) - 1)) !! 1))))
@@ -128,7 +130,6 @@ temTerritorioConquistadoRec (head:tail) indice =
 
 temTerritorioConquistado::[[Int]]->Int
 temTerritorioConquistado mapa = temTerritorioConquistadoRec mapa 1
-
 
 -- mapa, indicePaisAtacante, indiceAlvo, qtdExercitos
 -- atacar::[[Int]]->Int->Int->Int->[[Int]]

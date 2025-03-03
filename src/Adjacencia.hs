@@ -26,7 +26,7 @@ matrizAdjacencia =
         [16, 19, 22], --vizinhos do 21
         [23, 21, 19], --vizinhos do 22
         [24, 22], --vizinhos do 23
-        [23], --vizinhos do 24
+        [23] --vizinhos do 24
     ]
 
 checarAdjacencia::Int->Int->[[Int]]->Bool
