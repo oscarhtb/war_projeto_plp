@@ -80,7 +80,7 @@ checaOceania indiceJogador mapa =
 
 checaAsia::Int->[[Int]]->Bool
 checaAsia indiceJogador mapa =
-    ((mapa !! 10) !! 0) == indiceJogador && ((mapa !! 16) !! 0) == indiceJogador && ((mapa !! 17) !! 0) == indiceJogador && ((mapa !! 18) !! 0) == indiceJogador && ((mapa !! 19) !! 0) == indiceJogador && ((mapa !! 20) !! 0) == indiceJogador && ((mapa !! 21) !! 0) == indiceJogador
+    ((mapa !! 10) !! 0) == indiceJogador && ((mapa !! 16) !! 0) == indiceJogador && ((mapa !! 17) !! 0) == indiceJogador && ((mapa !! 18) !! 0) == indiceJogador && ((mapa !! 19) !! 0) == indiceJogador && ((mapa !! 20) !! 0) == indiceJogador && ((mapa !! 21) !! 0) == indiceJogador && ((mapa !! 15) !! 0) == indiceJogador
 
 checaEuropa::Int->[[Int]]->Bool
 checaEuropa indiceJogador mapa =
@@ -88,4 +88,4 @@ checaEuropa indiceJogador mapa =
 
 checaAfrica::Int->[[Int]]->Bool
 checaAfrica indiceJogador mapa =
-    (((mapa !! 11) !! 0) == indiceJogador) && (((mapa !! 12) !! 0) == indiceJogador )&& (((mapa !! 13) !! 0) == indiceJogador) && (((mapa !! 14) !! 0) == indiceJogador) && ((mapa !! 15) !! 0) == indiceJogador
+    (((mapa !! 11) !! 0) == indiceJogador) && (((mapa !! 12) !! 0) == indiceJogador) && (((mapa !! 13) !! 0) == indiceJogador) && (((mapa !! 14) !! 0) == indiceJogador)
