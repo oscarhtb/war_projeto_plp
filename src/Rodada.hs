@@ -10,22 +10,25 @@ import ShuffleListPura (gerarSeed, shuffleListPura)
 import Movimento (inputMovimento)
 import ChecagemDeObjetivos (checagemVitoria)
 import MostrarObjetivos (imprimeObjetivo)
+import Adjacencia (checarAdjacencia, matrizAdjacencia)
 
 rodada::Int->[Int]->[Int]->Int->[[Int]]->IO()
 rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
 
-    defineCor indiceJogador
-    putStrLn $ "Vez do jogador " ++ (show indiceJogador)
-    setSGR [Reset]
-
-    novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
-    verificaObjetivos jogadoresInfo objetivos mapa
-
-    if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
+    if (contagemDeTerritorios indiceJogador mapa) == 0 then rodada numRodada jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapa
     else do
-        mapaPosAtaque <- inputAtaque novoMapa indiceJogador jogadoresInfo objetivos
-        mapaPosMover <- inputMovimento mapaPosAtaque indiceJogador []
-        rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosMover
+        defineCor indiceJogador
+        putStrLn $ "Vez do jogador " ++ (show indiceJogador)
+        setSGR [Reset]
+
+        novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
+        verificaObjetivos jogadoresInfo objetivos mapa
+
+        if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
+        else do
+            mapaPosAtaque <- inputAtaque novoMapa indiceJogador jogadoresInfo objetivos
+            mapaPosMover <- inputMovimento mapaPosAtaque indiceJogador []
+            rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosMover
     
 verificaObjetivos::[Int]->[Int]->[[Int]]->IO()
 verificaObjetivos jogInfo objetivos mapa = do
@@ -43,27 +46,54 @@ inputAtaque mapa indiceJogador jogadoresInfo objetivos = do
     verificaObjetivos jogadoresInfo objetivos mapa
     imprimeMapa mapa
     print "Voce deseja atacar? (1)Sim (0)Nao"
-    resposta <- readLn::IO Int
-    if resposta == 1 then do
-        putStrLn "Qual territorio voce quer usar para atacar?"
-        terr <- getLine
-        putStrLn "Qual territorio voce deseja invadir?"
-        alvo <- getLine
-        putStrLn "Com quantos exercitos voce deseja atacar?"
-        qtd <- readLn :: IO Int
-        randomSeed <- gerarSeed
-        let jogadaDados = (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! ((mapeiaTerritorio alvo) - 1)) !! 1))))
-        putStrLn $ "Jogada dos dados: " ++ show jogadaDados
-        let mapaPosAtaque = acaoDeAtaque mapa (mapeiaTerritorio terr) (mapeiaTerritorio alvo) qtd jogadaDados
-        -- func para checar se o mapa possui alguma posição com zero exércitos, o que indicaria território conquistado
-        if (temTerritorioConquistado mapaPosAtaque /= -1) then do
-            putStrLn "Você conquistou o território! Quantos exércitos você deseja transferir? (min: 1, max: 3)" -- na verdade o máximo depende da sua qtd de exercitos
-            transfere <- readLn :: IO Int
-            let aux = substituirSublista mapaPosAtaque (temTerritorioConquistado mapaPosAtaque) [indiceJogador, transfere]
-            inputAtaque (substituirSublista aux (mapeiaTerritorio terr) [indiceJogador, ((aux !! ((mapeiaTerritorio terr) - 1)) !! 1) - transfere]) indiceJogador jogadoresInfo objetivos
-        else inputAtaque (mapaPosAtaque) indiceJogador jogadoresInfo objetivos
-    else
-        return (mapa)
+    inputUsuario <- getLine
+    if not (ehInteiro inputUsuario) then do
+        putStrLn "Entrada invalida :("
+        inputAtaque mapa indiceJogador jogadoresInfo objetivos
+    else --é inteiro
+        let resposta = read inputUsuario :: Int
+        in if resposta == 1 then do
+            putStrLn "Qual territorio voce quer usar para atacar?"
+            terr <- getLine
+            if (not (pertence mapa (mapeiaTerritorio terr) indiceJogador)) || (((mapa !! ((mapeiaTerritorio terr) - 1)) !! 1) < 2) then do
+                putStrLn "Entrada invalida :("
+                inputAtaque mapa indiceJogador jogadoresInfo objetivos
+            else do
+                putStrLn "Qual territorio voce deseja invadir?"
+                alvo <- getLine
+                if ((mapeiaTerritorio alvo) == -1) || (pertence mapa (mapeiaTerritorio alvo) indiceJogador) || (not (checarAdjacencia (mapeiaTerritorio terr) (mapeiaTerritorio alvo) matrizAdjacencia)) then do
+                    putStrLn "Entrada invalida :("
+                    inputAtaque mapa indiceJogador jogadoresInfo objetivos
+                else do
+                    putStrLn "Com quantos exercitos voce deseja atacar?"
+                    inputUsuario2 <- getLine
+                    if not (ehInteiro inputUsuario2) then do
+                        putStrLn "Entrada Invalida :("
+                        inputAtaque mapa indiceJogador jogadoresInfo objetivos
+                    else --é inteiro
+                        let qtd = read inputUsuario2 :: Int
+                        in if (qtd < 1) || (qtd > (qtdMaxAtaque mapa (mapeiaTerritorio terr))) then do
+                            putStrLn "Entrada Invalida :("
+                            inputAtaque mapa indiceJogador jogadoresInfo objetivos
+                        else do
+                            randomSeed <- gerarSeed
+                            let jogadaDados = (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! ((mapeiaTerritorio alvo) - 1)) !! 1))))
+                            putStrLn $ "Jogada dos dados: " ++ show jogadaDados
+                            let mapaPosAtaque = acaoDeAtaque mapa (mapeiaTerritorio terr) (mapeiaTerritorio alvo) qtd jogadaDados
+                            
+                            if (temTerritorioConquistado mapaPosAtaque /= -1) then do -- fazer maxTransf
+                                putStrLn ("Você conquistou o território! Quantos exércitos você deseja transferir? (min: 1, max: " ++ (show (maxTransf mapaPosAtaque (mapeiaTerritorio terr))) ++ ")")
+                                inputUsuario3 <- getLine
+                                if not (ehInteiro inputUsuario3) then do
+                                    putStrLn "Entrada invalida :("
+                                    inputAtaque mapa indiceJogador jogadoresInfo objetivos
+                                else do
+                                    let transfere = read inputUsuario3 :: Int
+                                    let aux = substituirSublista mapaPosAtaque (temTerritorioConquistado mapaPosAtaque) [indiceJogador, transfere]
+                                    inputAtaque (substituirSublista aux (mapeiaTerritorio terr) [indiceJogador, ((aux !! ((mapeiaTerritorio terr) - 1)) !! 1) - transfere]) indiceJogador jogadoresInfo objetivos
+                            else inputAtaque (mapaPosAtaque) indiceJogador jogadoresInfo objetivos
+        else
+            return (mapa)
 
 acaoDeAtaque::[[Int]]->Int->Int->Int->[Int]->[[Int]]
 acaoDeAtaque mapa terr alvo qtd dados =
@@ -168,3 +198,16 @@ ehInteiro :: String -> Bool
 ehInteiro s = case readMaybe s :: Maybe Int of
                 Just _  -> True
                 Nothing -> False
+
+qtdMaxAtaque::[[Int]]->Int->Int
+qtdMaxAtaque mapa terr = min 3 (((mapa !! (terr - 1)) !! 1) - 1)
+
+maxTransf::[[Int]]->Int->Int
+maxTransf mapa terr =
+    min 3 (((mapa !! (terr - 1)) !! 1) - 1)
+
+contagemDeTerritorios::Int->[[Int]]->Int
+contagemDeTerritorios indiceJogador [] = 0
+contagemDeTerritorios indiceJogador (h:t) =
+    if (h !! 0) == indiceJogador then (1 + (contagemDeTerritorios indiceJogador t))
+    else contagemDeTerritorios indiceJogador t

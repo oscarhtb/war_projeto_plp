@@ -1,21 +1,43 @@
 module MenuInicial where
+import Text.Read (readMaybe)
 
-qtdMaxBots::Int->Int
-qtdMaxBots n = 4 - n
-
-
--- pergunta quantos jogadores vai ter
--- quantos deles vão ser bots
-
--- essa versão não trata entradas inválidas
 menuInicial::IO [Int]
 menuInicial = do
- putStrLn "Quantos jogadores terão na partida? (1 a 4):" -- é a quantidade de jogadores REAIS
- numJogadores <- readLn::IO Int
- if numJogadores == 4 then return [4, 0] else do
-    putStrLn $ "Quantos bots você quer ter? (1 a " ++ show (qtdMaxBots numJogadores) ++ "):"
-    numBots <- readLn::IO Int
-    return [numJogadores, numBots]
+ putStrLn "Quantos jogadores terão na partida? (1 a 4):"
+ inputUsuario <- getLine
+ if not (ehInteiro inputUsuario) then do
+    putStrLn "Entrada inválida :("
+    menuInicial
+ else
+    let numJogadores = read inputUsuario :: Int
+    in if (numJogadores > 4) || (numJogadores < 1) then do
+        putStrLn "Entrada inválida :("
+        menuInicial
+    else if numJogadores == 4 then return [4,0]
+    else do
+        putStrLn ("Quantos bots seu jogo terá? (" ++ (show (minBots numJogadores)) ++ " a " ++ (show (maxBots numJogadores)) ++ ")")
+        inputUsuarioBots <- getLine
+        if not (ehInteiro inputUsuarioBots) then do
+            putStrLn "Entrada inválida :("
+            menuInicial
+        else
+            let numBots = read inputUsuarioBots :: Int
+            in if (numBots < (minBots numJogadores)) || (numBots > (maxBots numJogadores)) then do
+                putStrLn "Entrada inválida :("
+                menuInicial
+            else
+                return ([numJogadores, numBots])
 
 
+ehInteiro :: String -> Bool
+ehInteiro s = case readMaybe s :: Maybe Int of
+                Just _  -> True
+                Nothing -> False
+
+maxBots::Int->Int
+maxBots numJogadores = 4 - numJogadores
+
+minBots::Int->Int
+minBots 1 = 1
+minBots n = 0
 

@@ -15,7 +15,7 @@ matrizAdjacencia =
         [9, 11, 16, 17], --vizinhos do 10
         [13, 10, 16], --vizinhos do 11
         [6, 9, 13], --vizinhos do 12
-        [15, 14], --vizinhos do 13
+        [15, 14, 12, 11], --vizinhos do 13
         [15, 13], --vizinhos do 14
         [14, 13], --vizinhos do 15
         [11, 10, 17, 19, 21], --vizinhos do 16
