@@ -28,7 +28,9 @@ rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
 
             if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
             else do
-                mapaPosAtaque <- botAtaque novoMapa indiceJogador jogadoresInfo objetivos
+                mapaPosAtaque <- botAtaca novoMapa indiceJogador jogadoresInfo objetivos
+                rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosAtaque
+
 
         else do
             novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
