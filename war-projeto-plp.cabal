@@ -77,7 +77,8 @@ executable war-projeto-plp
       random,
       time,
       process,
-      ansi-terminal
+      ansi-terminal,
+      directory
 
     -- Directories containing source files.
     hs-source-dirs:   app, src
