@@ -24,7 +24,11 @@ exporObjetivoRec qtd a [] = do
     _ <- getLine
     clearScreen
 exporObjetivoRec qtd indice (h:t)
-    | indice > qtd = putStrLn "Todos os objetivos foram exibidos."
+    | indice > qtd = do
+        putStrLn "Pressione ENTER para continuar"
+        _ <- getLine
+        clearScreen
+        putStrLn "Todos os objetivos foram exibidos."
     | otherwise = do
         putStrLn $ "Pressione ENTER"
         _ <- getLine

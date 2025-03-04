@@ -11,6 +11,7 @@ import Movimento (inputMovimento)
 import ChecagemDeObjetivos (checagemVitoria)
 import MostrarObjetivos (imprimeObjetivo)
 import Adjacencia (checarAdjacencia, matrizAdjacencia)
+import BotJogadas (botAlocacaoTerritorios, botAtaca)
 
 rodada::Int->[Int]->[Int]->Int->[[Int]]->IO()
 rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
@@ -21,14 +22,25 @@ rodada numRodada jogadoresInfo objetivos indiceJogador mapa = do
         putStrLn $ "Vez do jogador " ++ (show indiceJogador)
         setSGR [Reset]
 
-        novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
-        verificaObjetivos jogadoresInfo objetivos mapa
+        if ehBot jogadoresInfo indiceJogador then do
+            novoMapa <- botAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
+            verificaObjetivos jogadoresInfo objetivos mapa
 
-        if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
+            if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
+            else do
+                mapaPosAtaque <- botAtaca novoMapa indiceJogador jogadoresInfo objetivos
+                rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosAtaque
+
+
         else do
-            mapaPosAtaque <- inputAtaque novoMapa indiceJogador jogadoresInfo objetivos
-            mapaPosMover <- inputMovimento mapaPosAtaque indiceJogador []
-            rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosMover
+            novoMapa <- menuAlocacaoTerritorios mapa indiceJogador 5 jogadoresInfo objetivos
+            verificaObjetivos jogadoresInfo objetivos mapa
+
+            if (numRodada <= (sum jogadoresInfo)) then rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) novoMapa
+            else do
+                mapaPosAtaque <- inputAtaque novoMapa indiceJogador jogadoresInfo objetivos
+                mapaPosMover <- inputMovimento mapaPosAtaque indiceJogador []
+                rodada (numRodada + 1) jogadoresInfo objetivos ((mod indiceJogador (sum jogadoresInfo)) + 1) mapaPosMover
     
 verificaObjetivos::[Int]->[Int]->[[Int]]->IO()
 verificaObjetivos jogInfo objetivos mapa = do
@@ -37,6 +49,7 @@ verificaObjetivos jogInfo objetivos mapa = do
         defineCor vitorioso
         putStrLn ("O jogador " ++ (show vitorioso) ++ " venceu!")
         putStrLn ("Seu objetivo de " ++ (imprimeObjetivo (objetivos !! (vitorioso - 1))) ++ " foi atingido com sucesso!")
+        setSGR [Reset]
         imprimeMapa mapa
         exitSuccess
     else return ()
@@ -102,15 +115,6 @@ acaoDeAtaque mapa terr alvo qtd dados =
 batalhaMapa::[[Int]]->Int->Int->Int->Int->[[Int]]
 batalhaMapa mapa perdasAtaque perdasDefesa terr alvo =
     substituirSublista (substituirSublista mapa terr [((mapa !! (terr - 1)) !! 0), ((mapa !! (terr - 1)) !! 1) - perdasAtaque]) alvo [((mapa !! (alvo - 1)) !! 0), ((mapa !! (alvo - 1)) !! 1) - perdasDefesa]
-
-
--- [5, 2, 4, 4, 4] [3, 3, 3, 3, 3]
--- [4, 2, 2] [3, 0, 0]
--- [4, 0, 0] [3, 2, 1]
--- [4, 3, 2, 1] [4] [3, 2, 1]
--- [4] [3]
-
--- dividir a lista de dados baseado no qtd, ordenar elas, passar as duas para o preencheDados e dividir o retorno
 
 -- testado, aparentemente funcionando
 calculaPerdasAtaque::[Int]->Int->Int --faz um take pra pegar os atacantes, ordena-os, pega os defensores, ordena-os
@@ -211,3 +215,6 @@ contagemDeTerritorios indiceJogador [] = 0
 contagemDeTerritorios indiceJogador (h:t) =
     if (h !! 0) == indiceJogador then (1 + (contagemDeTerritorios indiceJogador t))
     else contagemDeTerritorios indiceJogador t
+
+ehBot::[Int]->Int->Bool
+ehBot jogadoresInfo indiceJogador = indiceJogador > (jogadoresInfo !! 0)
