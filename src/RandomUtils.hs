@@ -1,10 +1,10 @@
-module ShuffleListPura where
+module RandomUtils where
+
 import System.Random (mkStdGen, randomR, StdGen)
 import Data.Time.Clock.POSIX (getPOSIXTime)
 
--- embaralha a lista a partir de uma seed
-shuffleListPura :: Int -> [a] -> [a]
-shuffleListPura seed xs = shuffle xs (mkStdGen seed)
+embaralhaLista :: Int -> [a] -> [a]
+embaralhaLista seed xs = shuffle xs (mkStdGen seed)
 
 -- utilizada pela função de embaralhar
 shuffle :: [a] -> StdGen -> [a]

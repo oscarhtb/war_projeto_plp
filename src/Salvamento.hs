@@ -1,6 +1,5 @@
 module Salvamento where
 
-import System.IO
 import Text.Read (readMaybe)
 
 salvarJogo :: [[[Int]]] -> FilePath -> IO ()

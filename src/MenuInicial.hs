@@ -1,5 +1,6 @@
 module MenuInicial where
-import Text.Read (readMaybe)
+
+import Utils (ehInteiro)
 
 menuInicial::IO [Int]
 menuInicial = do
@@ -28,16 +29,10 @@ menuInicial = do
             else
                 return ([numJogadores, numBots])
 
-
-ehInteiro :: String -> Bool
-ehInteiro s = case readMaybe s :: Maybe Int of
-                Just _  -> True
-                Nothing -> False
-
 maxBots::Int->Int
 maxBots numJogadores = 4 - numJogadores
 
 minBots::Int->Int
 minBots 1 = 1
-minBots n = 0
+minBots _ = 0
 

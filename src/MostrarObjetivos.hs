@@ -1,14 +1,8 @@
 module MostrarObjetivos where
+
 import System.Process (callCommand)
 
--- 1. conq 14 territórios
--- 2. ter pelo menos 2 jogadores em 12 ou mais territórios
--- 3. conq todas as américas e a oceania
--- 4. conq ásia e europa
--- 5. conq europa, oceania e áfrica
--- 6. conq américa e europa
-
--- qtd é a qunatidade de jogadores NÃO BOTS!
+-- qtd é a quantidade de jogadores NÃO BOTS!
 exporObjetivo :: Int -> [Int] -> IO ()
 exporObjetivo qtd objs = do
     print "Agora vamos mostrar os objetivos. Se prepare!"
@@ -18,7 +12,7 @@ exporObjetivo qtd objs = do
     exporObjetivoRec qtd 1 objs
 
 exporObjetivoRec :: Int -> Int -> [Int] -> IO ()
-exporObjetivoRec qtd a [] = do
+exporObjetivoRec _ _ [] = do
     putStrLn "Todos os objetivos foram exibidos."
     putStrLn "Pressione ENTER para continuar"
     _ <- getLine
@@ -38,12 +32,10 @@ exporObjetivoRec qtd indice (h:t)
         clearScreen
         putStrLn $ "Objetivo do jogador " ++ show indice
         putStrLn $ "Objetivo: " ++ imprimeObjetivo h
-        --_ <- getLine
-        --clearScreen
         exporObjetivoRec qtd (indice + 1) t
 
 clearScreen :: IO ()
-clearScreen = callCommand "clear"  -- "pode ser outro comando :("
+clearScreen = callCommand "clear" 
 
 imprimeObjetivo::Int->String
 imprimeObjetivo indice
