@@ -23,7 +23,16 @@ botAtaca mapa indiceJogador jogadoresInfo objetivos = do
         let qtd = pegaElementoAleatorio [1 .. (maxAtaque mapa (ataque !! 0))] seed
         putStrLn ("O jogador " ++ (show indiceJogador) ++ " (BOT) usou o territorio " ++ (retornaSigla (ataque !! 0)) ++ " para atacar o territorio " ++ (retornaSigla (ataque !! 1)) ++ " com " ++ (show qtd) ++ " exercitos.")
         let jogadaDados = (gerarJogadasDosDados seed (qtd + (min 3 ((mapa !! ((ataque !! 1) - 1)) !! 1))))
-        putStrLn ("Resultado dos dados: " ++ (show jogadaDados))
+
+        -----------------------------------------------------
+        -- putStrLn ("Resultado dos dados: " ++ (show jogadaDados))
+        putStr "DADOS DE ATAQUE: "
+        putStrLn (show (reverse (sort (take qtd jogadaDados))))
+        putStr "DADOS DE DEFESA: "
+        putStrLn (show (reverse (sort (drop qtd jogadaDados))))
+        putStrLn ("O jogador atacante perdeu " ++ show (calculaPerdasAtaque jogadaDados qtd) ++ " exercitos")
+        putStrLn ("E o defensor perdeu " ++ show (calculaPerdasDefesa jogadaDados qtd))
+        ------------------------------------------------------
         let mapaPosAtaque = acaoDeAtaque mapa (ataque !! 0) (ataque !! 1) qtd jogadaDados -- trazer acaoDeAtaque
         if (temTerritorioConquistado mapaPosAtaque /= -1) then do -- trazer temTerritorioConquistado
             let transfere = pegaElementoAleatorio [1 .. (maxAtaque mapaPosAtaque (ataque !! 0))] seed
