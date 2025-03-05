@@ -126,7 +126,17 @@ inputAtaque mapa indiceJogador jogadoresInfo objetivos = do
                         else do
                             randomSeed <- gerarSeed
                             let jogadaDados = (gerarJogadasDosDados randomSeed (qtd + (min 3 ((mapa !! ((mapeiaTerritorio alvo) - 1)) !! 1))))
-                            putStrLn $ "Jogada dos dados: " ++ show jogadaDados
+                            --putStrLn $ "Jogada dos dados: " ++ show jogadaDados
+                            -----------deixando a jogada dos dados mais explícita---------------
+                            putStr "DADOS DE ATAQUE: "
+                            putStrLn (show (reverse (sort (take qtd jogadaDados))))
+                            putStr "DADOS DE DEFESA: "
+                            putStrLn (show (reverse (sort (drop qtd jogadaDados))))
+                            putStrLn ("O jogador atacante perdeu " ++ show (calculaPerdasAtaque jogadaDados qtd) ++ " exercitos")
+                            putStrLn ("E o defensor perdeu " ++ show (calculaPerdasDefesa jogadaDados qtd))
+
+                            -- fim ---------------------------------------------------
+
                             let mapaPosAtaque = acaoDeAtaque mapa (mapeiaTerritorio terr) (mapeiaTerritorio alvo) qtd jogadaDados
                             
                             if (temTerritorioConquistado mapaPosAtaque /= -1) then do -- fazer maxTransf
