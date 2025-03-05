@@ -1,8 +1,8 @@
 module Movimento where
-import Text.Read (readMaybe)
+
 import MapeamentoTerritorios (mapeiaTerritorio)
 import Adjacencia (checarAdjacencia, matrizAdjacencia)
-import PosicionamentoInicial (substituirSublista)
+import Utils (substituirSublista, ehInteiro)
 import RepresentacaoTerritorios (imprimeMapa)
 
 
@@ -58,8 +58,3 @@ movimentoJaRealizado movimentos territorio =
 realizaMovimento::[[Int]]->Int->Int->Int->[[Int]]
 realizaMovimento mapa origem destino qtd =
     substituirSublista (substituirSublista mapa destino [(mapa !! (destino - 1)) !! 0, ((mapa !! (destino - 1)) !! 1) + qtd]) origem [(mapa !! (origem - 1)) !! 0, ((mapa !! (origem - 1)) !! 1) - qtd]
-
-ehInteiro :: String -> Bool
-ehInteiro s = case readMaybe s :: Maybe Int of
-                Just _  -> True
-                Nothing -> False

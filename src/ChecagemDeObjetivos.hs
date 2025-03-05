@@ -6,13 +6,14 @@ checagemVitoria jogadoresInfo listaDeObjetivos mapa =
     checagemVitoriaRec (transformacaoDeLista jogadoresInfo) listaDeObjetivos mapa
 
 checagemVitoriaRec::[Int]->[Int]->[[Int]]->Int
-checagemVitoriaRec [] obj mapa = -1
-checagemVitoriaRec (h:t) (head:tail) mapa =
-    if checaObjetivo head h mapa then h
-    else checagemVitoriaRec t tail mapa
+checagemVitoriaRec [] _ _ = -1
+checagemVitoriaRec _ [] _ = -1
+checagemVitoriaRec (h:t) (hd:tl) mapa =
+    if checaObjetivo hd h mapa then h
+    else checagemVitoriaRec t tl mapa
 
 
-
+checaObjetivo::Int->Int->[[Int]]->Bool
 checaObjetivo numObjetivo indiceJogador mapa =
     (funcoesDeObjetivo !! (numObjetivo - 1)) indiceJogador mapa
 
@@ -58,13 +59,13 @@ funcoesDeObjetivo =
 
 
 contagemDeTerritorios::Int->[[Int]]->Int
-contagemDeTerritorios indiceJogador [] = 0
+contagemDeTerritorios _ [] = 0
 contagemDeTerritorios indiceJogador (h:t) =
     if (h !! 0) == indiceJogador then (1 + (contagemDeTerritorios indiceJogador t))
     else contagemDeTerritorios indiceJogador t
 
 contagemDeTerritoriosComMaisDeUmExercito::Int->[[Int]]->Int
-contagemDeTerritoriosComMaisDeUmExercito indiceJogador [] = 0
+contagemDeTerritoriosComMaisDeUmExercito _ [] = 0
 contagemDeTerritoriosComMaisDeUmExercito indiceJogador (h:t) =
     if (h !! 0) == indiceJogador && ((h !! 1) > 1) then (1 + (contagemDeTerritoriosComMaisDeUmExercito indiceJogador t))
     else contagemDeTerritoriosComMaisDeUmExercito indiceJogador t

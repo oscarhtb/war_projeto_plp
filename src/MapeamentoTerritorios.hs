@@ -1,8 +1,5 @@
 module MapeamentoTerritorios where
 
--- uma lista na qual cada elemento representa os vizinhos do território que representa seu índice
-
-
 retornaSigla::Int->String
 retornaSigla indice
     |indice == 1 = "AL"
@@ -58,6 +55,4 @@ mapeiaTerritorio territorio
     |territorio == "AU" = 23
     |territorio == "NZ" = 24
     |otherwise = -1
-
-
-
+    
