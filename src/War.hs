@@ -28,7 +28,7 @@ war = do
             print "Os territorios foram sorteados!"
             imprimeMapa mapa
             exporObjetivo (jogadoresInfo !! 0) objetivos
-            rodada 1 jogadoresInfo objetivos 1 mapa
+            rodada 1 jogadoresInfo objetivos 1 mapa False
         "1" -> do
             putStrLn "Digite o nome do jogo que você quer carregar:"
             nomeDoArquivo <- getLine
@@ -42,7 +42,7 @@ war = do
                         let obj = (estadoJogo !! 1) !! 1
                         let indiceJogador = ((estadoJogo !! 2) !! 0) !! 1
                         let m = estadoJogo !! 0
-                        rodada numRodada jogInfo obj indiceJogador m
+                        rodada numRodada jogInfo obj indiceJogador m True
                     Nothing -> putStrLn "Erro ao carregar o jogo. O arquivo pode estar corrompido ou no formato errado."
             else do
                 putStrLn "Arquivo não encontrado! Tente novamente."
