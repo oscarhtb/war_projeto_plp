@@ -45,6 +45,10 @@ checaAmericaEuropa::Int->[[Int]]->Bool
 checaAmericaEuropa indiceJogador mapa =
     (checaAmerica indiceJogador mapa) && (checaEuropa indiceJogador mapa)
 
+checaEliminaJogadorDois::Int->[[Int]]->Bool
+checaEliminaJogadorDois 2 mapa = checa14territorios 2 mapa
+checaEliminaJogadorDois _ mapa = contagemDeTerritorios 2 mapa == 0
+
 
 funcoesDeObjetivo::[Int->[[Int]]->Bool]
 funcoesDeObjetivo = 
@@ -54,7 +58,8 @@ funcoesDeObjetivo =
         checaAmericaOceania,
         checaAsiaEuropa,
         checaEuropaOceaniaAfrica,
-        checaAmericaEuropa
+        checaAmericaEuropa,
+        checaEliminaJogadorDois
     ]
 
 
