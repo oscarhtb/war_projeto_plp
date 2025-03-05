@@ -14,7 +14,7 @@ war :: IO ()
 war = do
     seed1 <- gerarSeed
     seed2 <- gerarSeed
-    let objetivosSorteados = embaralhaLista seed1 [1..6]
+    let objetivosSorteados = embaralhaLista seed1 [1..7]
     let territoriosSorteados = embaralhaLista seed2 [1..24]
 
     putStrLn "Você deseja iniciar um novo jogo (0) ou continuar um jogo salvo (1)?"

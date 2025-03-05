@@ -45,6 +45,7 @@ imprimeObjetivo indice
     |indice == 4 = asiaEuropa
     |indice == 5 = europaOceaniaAfrica
     |indice == 6 = americaEuropa
+    |indice == 7 = eliminarJogadorDois
     |otherwise = "número inválido"
 
 quatorzeTerritorios :: String
@@ -64,3 +65,6 @@ europaOceaniaAfrica = "Conquistar na totalidade a EUROPA, a OCEANIA e a ÁFRICA.
 
 americaEuropa :: String
 americaEuropa = "Conquistar na totalidade a AMÉRICA e a EUROPA."
+
+eliminarJogadorDois :: String
+eliminarJogadorDois = "Seu objetivo é fazer com que o JOGADOR 2 seja ELIMINADO. Caso você seja o jogador dois, seu objetivo passar a ser conquistar QUATORZE TERRITÓRIOS à sua escolha"
