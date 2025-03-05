@@ -33,13 +33,13 @@ inputMovimento mapa indiceJogador movimentosFeitos = do
                     putStrLn "Entrada inválida :("
                     inputMovimento mapa indiceJogador movimentosFeitos
                 else do
-                    putStrLn "E quantos exercitos serão transferidos? (min: 1, max: 3)"
+                    putStrLn ("E quantos exercitos serão transferidos? (min: 1, max: " ++ show (maxMover mapa (mapeiaTerritorio res)) ++ ")")
                     qtd <- readLn :: IO Int
                     if (qtd < 1) || (qtd > 3) || not (possuiExercitosSuficientes mapa (mapeiaTerritorio res) qtd) then do
                         putStrLn "Entrada inválida :("
                         inputMovimento mapa indiceJogador movimentosFeitos
                     else
-                        inputMovimento (realizaMovimento mapa (mapeiaTerritorio res) (mapeiaTerritorio res2) qtd) indiceJogador (movimentosFeitos ++ [(mapeiaTerritorio res)])
+                        inputMovimento (realizaMovimento mapa (mapeiaTerritorio res) (mapeiaTerritorio res2) qtd) indiceJogador (movimentosFeitos ++ [(mapeiaTerritorio res2)])
         else return (mapa)
 
 possuiExercitosSuficientes::[[Int]]->Int->Int->Bool
@@ -58,3 +58,7 @@ movimentoJaRealizado movimentos territorio =
 realizaMovimento::[[Int]]->Int->Int->Int->[[Int]]
 realizaMovimento mapa origem destino qtd =
     substituirSublista (substituirSublista mapa destino [(mapa !! (destino - 1)) !! 0, ((mapa !! (destino - 1)) !! 1) + qtd]) origem [(mapa !! (origem - 1)) !! 0, ((mapa !! (origem - 1)) !! 1) - qtd]
+
+maxMover::[[Int]]->Int->Int
+maxMover mapa terr =
+    min 3 (((mapa !! (terr - 1)) !! 1) - 1)

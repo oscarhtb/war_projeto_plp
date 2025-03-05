@@ -90,7 +90,7 @@ inputAtaque mapa indiceJogador jogadoresInfo objetivos = do
                     putStrLn "Entrada invalida :("
                     inputAtaque mapa indiceJogador jogadoresInfo objetivos
                 else do
-                    putStrLn "Com quantos exercitos voce deseja atacar?"
+                    putStrLn ("Com quantos exercitos voce deseja atacar? (min: 1, max: " ++ show (qtdMaxAtaque mapa (mapeiaTerritorio terr)) ++ ")")
                     inputUsuario2 <- getLine
                     if not (ehInteiro inputUsuario2) then do
                         putStrLn "Entrada Invalida :("
