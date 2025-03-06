@@ -6,9 +6,13 @@ O projeto, desenvolvido em haskell, consiste em um jogo de estratégia baseado d
 O mapa possui um total de 24 territórios, divididos entre cinco continentes, conforme a seguinte distribuição:
 
 América: AL, CA, GL, NY, MX, BR, AR
+
 Ásia: TU, MO, CH, SI, VL,IN, VI, JP
+
 Europa: UK, GE, SP
+
 África: MR, EG, SA, MA
+
 Oceania: AU, NZ 
 
 Cada território possui, inicialmente, 01 exército, e uma cor que representa a qual jogador ele pertence. 
