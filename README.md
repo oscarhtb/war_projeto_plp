@@ -126,8 +126,9 @@ AU : (NZ, VI)
 
 NZ : (AU)
 
-7. OBJETIVOS: no início de cada partida, cada jogador recebe um objetivo diferente dentre os 7 disponíveis, o jogo checa a cada ação relevante se algum dos objetivos foram cumpridos, aquele que cumpre seu objetivo ganha o jogo e ele se encerra imediatamente.
- 6.1: objetivos existentes:
+6. OBJETIVOS: no início de cada partida, cada jogador recebe um objetivo diferente dentre os 7 disponíveis, o jogo checa a cada ação relevante se algum dos objetivos foram cumpridos, aquele que cumpre seu objetivo ganha o jogo e ele se encerra imediatamente.
+ 
+  6.1: objetivos existentes:
    eliminar o jogador 2 ou (caso o jogador 2 o receba), conquistar 14 territórios
    conquistar 14 territórios
    conquistar 12 territórios tendo 2 ou mais exércitos em cada um
