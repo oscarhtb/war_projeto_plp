@@ -79,31 +79,54 @@ REGRAS E FLUXO DO JOGO
 
 5. VIZINHANÇAS: os territórios considerados vizinhos e que podem interagir diretamente, em formato de lista de adjacência:
 AL : (NA, VL)
+
 NA : (AL, MX, NY, GL)
+
 GL : (UK, NA, NY)
+
 NY : (GL, NA, MX)
+
 MX : (NY, NA, BR)
+
 BR : (MX, AR, MR)
+
 AR : (BR)
+
 UK : (GL, GE)
+
 GE : (UK, MR, SP)
+
 SP : (GE, TU, MO, SI)
+
 TU : (EG, SP, MO)
+
 MR : (BR, GE, EG)
+
 EG : (MA, SA)
+
 SA : (MA, EG)
+
 MA : (SA, EG)
+
 MO : (TU, SP, SI, CH, IN)
+
 SI : (MO, VL, SP, CH)
+
 VL : (AL, SI, JP)
+
 CH : (IN, VI, JP, MO, SI)
+
 JP : (VL, CH)
+
 IN : (MO, CH, VI)
+
 VI : (AU, IN, CH)
+
 AU : (NZ, VI)
+
 NZ : (AU)
 
-6. OBJETIVOS: no início de cada partida, cada jogador recebe um objetivo diferente dentre os 7 disponíveis, o jogo checa a cada ação relevante se algum dos objetivos foram cumpridos, aquele que cumpre seu objetivo ganha o jogo e ele se encerra imediatamente.
+7. OBJETIVOS: no início de cada partida, cada jogador recebe um objetivo diferente dentre os 7 disponíveis, o jogo checa a cada ação relevante se algum dos objetivos foram cumpridos, aquele que cumpre seu objetivo ganha o jogo e ele se encerra imediatamente.
  6.1: objetivos existentes:
    eliminar o jogador 2 ou (caso o jogador 2 o receba), conquistar 14 territórios
    conquistar 14 territórios
